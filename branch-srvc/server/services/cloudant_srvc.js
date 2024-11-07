@@ -44,6 +44,36 @@ export class CloudantSrvc  {
 
         let response = await this.service.postDocument({ "db": this.icld_db, "document": corporate })
         return response.result.id
+    }
+    async readCorporatebyid(  parm ){
+
+        let response = await this.service.getDocument({ "db": this.icld_db, "docId": parm.corporateid })
+        let corporate = response.result
+        return corporate
+
+    }
+
+    async readCorporateList(){
+        let response = await this.service.postAllDocs({ "db": this.icld_db, includeDocs: true, startKey: 'CORP', limit: 100});
+        let documentList = response.result.rows;
+
+        let corporateList=[]
+        for (const document of documentList) {
+            corporateList.push(document.doc)
+          }
+        return corporateList;
+
+    }
+
+    async deleteCorporatebyid(  parm ){
+
+        let response_g = await this.service.getDocument({ "db": this.icld_db, "docId": parm.corporateid })
+        let revision = response_g.result._rev
+
+
+        let response = await this.service.deleteDocument({ "db": this.icld_db, "docId": parm.corporateid , "rev": revision})
+        let corporate = response.result
+        return corporate
 
     }
 
