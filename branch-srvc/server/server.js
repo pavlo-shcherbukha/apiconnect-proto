@@ -17,6 +17,7 @@ import {logger}  from './config/winston.js';
 import morgan from'morgan';
 import  localconfig from './config/local.json' assert { type: 'json' };
 import { fileURLToPath } from 'url';
+import {CloudantSrvc} from './services/cloudant_srvc.js'
 
 dotenv.config();
 const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
@@ -30,28 +31,18 @@ app.set('x-powered-by', false);
 const applogger = app.get('logger').child({ hostname: process.env.HOSTNAME||'localhost', label: 'app' });
 applogger.info("app logger added");
 
-/*
-app.set('psp_data',path.join(__dirname, process.env.PSP_DATA));
-app.set('psp_img',path.join(__dirname, process.env.PSP_IMG));
-
-app.set('psp_o_data',path.join(__dirname, process.env.PSP_O_DATA));
-app.set('psp_o_img',path.join(__dirname, process.env.PSP_O_IMG));
-app.set('tax_o_img',path.join(__dirname, process.env.TAX_O_IMG));
 
 
-app.set('sharing_url',process.env.PSP_URL);
-app.set('signature_url',process.env.SIGNATURE_URL);
-app.set('diia_acquirer_token',process.env.DIIA_ACQUIRER_TOKEN);
-app.set('cryptobaseurl',process.env.CRYPTO_BASE_URL);
-app.set('issuer',process.env.ISSUER);
-app.set('serial',process.env.SERIAL);
-*/
+app.set('cld_url',process.env.CLOUDANT_URL);
+app.set('cld_apikey',process.env.CLOUDANT_APIKEY);
+app.set('cld_dbname',process.env.STORAGE_DBNAME);
+
+
+
+
 applogger.debug("==========================================================================")
-//applogger.debug(`Метаданні по sharing - offLine ${app.get("psp_data")}`)
-//applogger.debug(`Бінарний образ документу по sharing - o ${app.get("psp_img")}`)
-//applogger.debug(`Метаданні по sharing - onLine ${app.get("psp_o_data")}`)
-//applogger.debug(`Каталог бінарних образів паспортів ${app.get("psp_o_img")}`)
-//applogger.debug(`Каталог бінарних образів довідки з інд.кодом ${app.get("tax_o_img")}`)
+applogger.debug(`URL бази даних: ${app.get("cld_url")}`)
+applogger.debug(`Назва бази даних: ${app.get("cld_dbname")}`)
 applogger.debug("==========================================================================")
 
 
@@ -72,15 +63,24 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+const cloudant = new CloudantSrvc( app )
+app.set( "cloudantdb",cloudant)
+
+
+
 // === app routers ============================
 import health from './routers/health.js';
-//import diiaauth from './routers/diiaauth.js';
+import branch from './routers/branch.js';
+import corporate from './routers/corporate.js';
+
 //import sharing_offline from './routers/diia_share_offline.js';
 //import sharing_online from './routers/diia_share_online.js';
 //import diiasign from './routers/diiasignreq.js';
 
 health(app)
-//diiaauth(app)
+branch(app)
+corporate(app)
+
 //sharing_offline(app)
 //sharing_online(app)
 //diiasign(app)
