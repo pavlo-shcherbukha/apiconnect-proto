@@ -77,4 +77,78 @@ export class CloudantSrvc  {
 
     }
 
+    async updateCorporatebyid(  parm ){
+
+        let response = await this.service.putDocument({ "db": this.icld_db, "docId": parm.corporateid , document: parm.corporate})
+        let corporate = response.result
+        return corporate
+
+    }
+
+
+    async createBranch(  parm ){
+
+        let uid=await this.service.getUuids({"count": 1})
+        let branch = {}
+        branch._id="BRANCH-"+uid.result.uuids[0];
+        branch.corporateid = parm.corporateid
+        branch.type= 'BRANCH';
+        branch.branch_name = parm.branch.branch_name;
+        branch.branch_erdpou = parm.branch.branch_edrpou;
+        branch.branch_adress = parm.branch.branch_adress;
+        branch.branch_phone = parm.branch.branch_phone;
+        branch.branch_sign_certs = parm.branch.branch_sign_certs;
+        branch.branch_encrypt_certs= parm.branch.branch_encrypt_certs;
+        let response = await this.service.postDocument({ "db": this.icld_db, "document": branch })
+        let corporate = await this.readCorporatebyid({"corporateid": parm.corporateid})
+        corporate.branches.push(branch._id);
+        let updresponse=await this.updateCorporatebyid({"corporateid": parm.corporateid, "corporate": corporate})
+        return response.result.id
+    }
+
+    async readBranchbyid(  parm ){
+
+        let response = await this.service.getDocument({ "db": this.icld_db, "docId": parm.branchid })
+        let branch = response.result
+        if (branch.corporateid !== parm.corporateid){
+            branch={}
+        }
+        return branch
+
+    }
+
+    async readBranchList(parm){
+        let corporateid=parm.corporateid;
+        let response = await this.service.postFind( 
+            { 
+                "db": this.icld_db,
+                "selector":{ "corporateid": {"$eq": corporateid } },
+                "fields": ["_id", "_rev"],
+                "limit": 100
+            }
+        );
+        let documentList = response.result.docs;
+
+        let branchList=[]
+        for (const document of documentList) {
+            let branch = await this.readBranchbyid({ "corporateid": corporateid ,branchid: document._id})
+            branchList.push(branch)
+          }
+        return branchList;
+
+    }
+
+    async deleteBranchbyid(  parm ){
+
+        let response_g = await this.service.getDocument({ "db": this.icld_db, "docId": parm.branchid })
+        let revision = response_g.result._rev
+
+
+        let response = await this.service.deleteDocument({ "db": this.icld_db, "docId": parm.branchid , "rev": revision})
+        let branch = response.result
+        return branch
+
+    }
+
+
 }    
