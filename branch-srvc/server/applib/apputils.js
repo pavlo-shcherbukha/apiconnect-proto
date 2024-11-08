@@ -10,14 +10,10 @@
  * @param {any} p_value любая переменная
  * @returns {boolean} l_result результат проверки переменной 
  */
-function isDefined(p_value) {
+export function isDefined(p_value) {
 	let l_result = true ;
 	if (typeof p_value === "undefined"){
 		l_result=false;
-	} else if ( p_value === null){
-		l_result=false;
-	} else {
-		// do nothing
 	};
 	return l_result ;     
 }
@@ -29,8 +25,8 @@ function isDefined(p_value) {
  * @return {string} err_message сообщение об ошибке
  *  
  */
-function formatError( err ){
-	var err_message='' ;
+export function formatError( err ){
+	let err_message='' ;
 	
 	if( err.hasOwnProperty('response')){
 		if (err.hasOwnProperty('err.response.data.ErrorResponse.description')) {
@@ -45,5 +41,3 @@ function formatError( err ){
 	return err_message ;
 }
 
-module.exports.isDefined = isDefined;
-module.exports.formatError = formatError;

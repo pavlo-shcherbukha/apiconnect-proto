@@ -3,6 +3,9 @@
 ## Ціль
 
 
+### Корисні документи
+
+ - [Cloudant API FOR Node.js](https://cloud.ibm.com/apidocs/cloudant)
 
 
 ## Ідея моделі
