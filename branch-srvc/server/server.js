@@ -100,12 +100,14 @@ app.use((req, res, next) => {
 
 // === app routers ============================
 import health from './routers/health.js';
+import healthroot from './routers/healthroot.js';
 import branch from './routers/branch.js';
 import corporate from './routers/corporate.js';
 
 
 
 health(app)
+healthroot(app)
 branch(app)
 corporate(app)
 
