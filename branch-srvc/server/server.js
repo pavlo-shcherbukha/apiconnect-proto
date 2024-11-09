@@ -67,23 +67,49 @@ const cloudant = new CloudantSrvc( app )
 app.set( "cloudantdb",cloudant)
 
 
+// ===== loggin req=resp
+
+
+app.use((req, res, next) => {
+    const log = logger.child({ hostname: process.env.HOSTNAME||'localhost', label: 'http-req-log' });
+    res.header({    "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Headers": "*",
+      "Access-Control-Allow-Methods": "DELETE,GET,PATCH,POST,PUT",
+      "Content-Type": "application/json; charset=utf-8"
+    });  
+
+    let lhttp_req = {  
+      originalUrl: req.baseURL,
+      baseUrl: req.baseURL,
+      path: req.url,
+      parms: req.params,
+      query: req.query,
+      method: req.method,
+      headers: req.headers,
+      Time: new Date()
+    };
+    let msg= `http Request: ^${JSON.stringify(lhttp_req)}^`
+    log.http(msg);
+    next();
+
+
+
+});
+
+  
 
 // === app routers ============================
 import health from './routers/health.js';
 import branch from './routers/branch.js';
 import corporate from './routers/corporate.js';
 
-//import sharing_offline from './routers/diia_share_offline.js';
-//import sharing_online from './routers/diia_share_online.js';
-//import diiasign from './routers/diiasignreq.js';
+
 
 health(app)
 branch(app)
 corporate(app)
 
-//sharing_offline(app)
-//sharing_online(app)
-//diiasign(app)
+
 // ============================================
 
 
