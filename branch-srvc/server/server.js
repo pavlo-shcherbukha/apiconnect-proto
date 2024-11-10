@@ -103,13 +103,14 @@ import health from './routers/health.js';
 import healthroot from './routers/healthroot.js';
 import branch from './routers/branch.js';
 import corporate from './routers/corporate.js';
-
+import corporate_api from './routers/corporate_api.js';
 
 
 health(app)
 healthroot(app)
 branch(app)
 corporate(app)
+corporate_api(app)
 
 
 // ============================================
