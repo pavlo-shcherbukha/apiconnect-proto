@@ -151,4 +151,48 @@ export class CloudantSrvc  {
     }
 
 
+    async createPayment(  parm ){
+
+        let uid=await this.service.getUuids({"count": 1})
+        let payment = {}
+        payment._id="PAYMENT-"+uid.result.uuids[0];
+        payment.type= 'PAYMENT';
+        payment.branchid=parm.payment.branchid;
+        payment.payment_type=parm.payment.payment_type;
+        payment.sep_payment_ref=parm.payment.sep_payment_ref
+        payment.signature=parm.payment.signature
+        payment.rows=parm.payment.rows
+        payment.proc_status="NEW"
+        let response = await this.service.postDocument({ "db": this.icld_db, "document": payment })
+
+        return response.result.id
+    }
+
+
+    async readPaymentStatus(  parm ){
+        let response = await this.service.getDocument({ "db": this.icld_db, "docId": parm.paymentid });
+        let payment= response.result;
+        return payment.proc_status;
+    }
+
+    async readPayment(  parm ){
+        let response = await this.service.getDocument({ "db": this.icld_db, "docId": parm.paymentid });
+        let payment= response.result;
+        return payment;
+    }
+
+    async deletePaymentbyid(  parm ){
+
+        let response_g = await this.service.getDocument({ "db": this.icld_db, "docId": parm.paymentid })
+        let revision = response_g.result._rev
+
+
+        let response = await this.service.deleteDocument({ "db": this.icld_db, "docId": parm.paymentid , "rev": revision})
+        let payment = response.result
+        return payment
+
+    }
+
+
+
 }    

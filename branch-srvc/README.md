@@ -54,3 +54,17 @@
 
 ```
 
+## Робота з IBM CloudShell  в хмарі IBM
+
+```bash
+
+ibmcloud target -r eu-de -g default
+
+ibmcloud ce project select -n ce-project-79
+
+ibmcloud ce project select -n ce-project-79
+
+ibmcloud ce application logs --application application-f9 --follow
+
+
+```
