@@ -27,7 +27,7 @@ const apphost=process.env.HOSTNAME||'localhost'
 const appport = process.env.PORT || localconfig.port;
 const app = express();
 app.set('logger', logger);
-app.set('x-powered-by', false);
+//app.set('x-powered-by', false);
 const applogger = app.get('logger').child({ hostname: process.env.HOSTNAME||'localhost', label: 'app' });
 applogger.info("app logger added");
 
@@ -103,6 +103,9 @@ import health from './routers/health.js';
 import healthroot from './routers/healthroot.js';
 import branch from './routers/branch.js';
 import corporate from './routers/corporate.js';
+import payment from './routers/payment.js';
+import pymprocessor from './routers/process.js';
+
 import corporate_api from './routers/corporate_api.js';
 
 
@@ -110,6 +113,9 @@ health(app)
 healthroot(app)
 branch(app)
 corporate(app)
+payment(app)
+pymprocessor(app)
+
 corporate_api(app)
 
 

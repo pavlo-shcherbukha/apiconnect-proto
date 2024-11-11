@@ -1,0 +1,74 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: health api
+  x-ibm-name: health-api
+  description: health api
+servers:
+  - url: /health-api
+x-ibm-configuration:
+  properties:
+    target-url:
+      value: https://application-f9.1nxfv2nzml19.eu-de.codeengine.appdomain.cloud
+      description: URL of the proxy policy
+      encoded: false
+  cors:
+    enabled: false
+  gateway: datapower-api-gateway
+  type: rest
+  phase: realized
+  enforced: true
+  testable: true
+  assembly:
+    execute:
+      - invoke:
+          version: 2.0.0
+          title: invoke
+          backend-type: detect
+          header-control:
+            type: blocklist
+            values: []
+          parameter-control:
+            type: allowlist
+            values: []
+          timeout: 60
+          verb: keep
+          chunked-uploads: true
+          persistent-connection: true
+          target-url: $(target-url)$(api.operation.path)
+          follow-redirects: false
+          inject-proxy-headers: true
+  activity-log:
+    enabled: true
+    success-content: activity
+    error-content: payload
+paths:
+  /:
+    get:
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                type: object
+                title: resp
+                properties:
+                  ok:
+                    type: boolean
+                  title:
+                    type: string
+  /api/health:
+    get:
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                title: healthapi_response
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+      operationId: get_health_api
