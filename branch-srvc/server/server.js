@@ -104,6 +104,7 @@ import healthroot from './routers/healthroot.js';
 import branch from './routers/branch.js';
 import corporate from './routers/corporate.js';
 import payment from './routers/payment.js';
+import pymprocessor from './routers/process.js';
 
 import corporate_api from './routers/corporate_api.js';
 
@@ -113,6 +114,7 @@ healthroot(app)
 branch(app)
 corporate(app)
 payment(app)
+pymprocessor(app)
 
 corporate_api(app)
 

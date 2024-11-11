@@ -181,18 +181,18 @@ export class CloudantSrvc  {
         return payment;
     }
 
-    async deletePaymentbyid(  parm ){
-
-        let response_g = await this.service.getDocument({ "db": this.icld_db, "docId": parm.paymentid })
-        let revision = response_g.result._rev
 
 
-        let response = await this.service.deleteDocument({ "db": this.icld_db, "docId": parm.paymentid , "rev": revision})
-        let payment = response.result
-        return payment
+    async processPayment(  parm ){
+        let response = await this.service.getDocument({ "db": this.icld_db, "docId": parm.paymentid });
+        let payment= response.result;
+        payment.proc_status=parm.status.proc_status
+        payment.proc_status_dsc=parm.status.proc_status_dsc
+        let response_save = await this.service.putDocument({ "db": this.icld_db, "docId": parm.paymentid , document: payment})
+        return response_save.result.id
+    }    
 
-    }
-
+    
 
 
 }    
