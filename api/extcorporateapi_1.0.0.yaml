@@ -173,7 +173,7 @@ x-ibm-configuration:
     enabled: true
     policy: []
 paths:
-  /corporate:
+  /corporate-api/corporate:
     get:
       responses:
         '200':
@@ -217,7 +217,7 @@ paths:
           description: success
       operationId: option_corporate
       parameters: []
-  /corporate/{corporateid}:
+  /corporate-api/corporate/{corporateid}:
     get:
       responses:
         '200':
