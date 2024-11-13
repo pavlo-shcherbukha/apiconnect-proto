@@ -75,6 +75,7 @@ export class CloudantSrvc  {
         for (const document of documentList) {
             let corporate = await this.readCorporatebyid({ "corporateid": document._id})
             corporateList.push(corporate)
+        
         }
         return corporateList;
 
