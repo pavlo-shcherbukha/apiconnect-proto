@@ -236,8 +236,50 @@ export default function corporate (app) {
 
 
     });
+    router.options('/:corporateid', async function(req, res, next) {
+        const log = logger.child({ hostname: process.env.HOSTNAME||'localhost', label: 'router:corporate' });
+        try{
+            log.info(`HTTP Request: Method: ${req.method} BaseUrl: ${req.baseUrl} `);
+            log.info("=========================================================================")
+            log.info(`HTTP Request.Headers: ${JSON.stringify(req.headers)}`);
+            log.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+            log.info(`HTTP Request.Body: ${JSON.stringify(req.body)}} `);
+            log.info(`HTTP Request.Params: ${ JSON.stringify(req.params)}`)
+            log.info("=========================================================================")
 
 
-    app.use('/corporate', router);
+            log.verbose(`Відправляю успішну відповідь`);
+            return res.status(200).end();  
+                                             
+        }
+        catch( err){
+            let res_err;
+            let res_status_code=422
+            if( err instanceof ValidationError){
+                res_status_code=err.status_code
+                res_err=ErrorHandler(err)
+            } else if(err instanceof ApplicationError){
+                res_status_code=err.status_code
+                res_err=ErrorHandler(err)
+            } else if(err instanceof ServerError){
+                res_status_code=err.status_code 
+                res_err=ErrorHandler(err)
+            } else if( err instanceof AxiosError){
+                res_status_code=err.status
+                res_err=ErrorHandler(err)
+            } else {
+              res_err= ErrorHandler(err)
+              res_err.Error.code="InternalError"
+              res_err.Error.target="corporate-router"
+            }  
+            log.error(res_err)
+            res.status(res_status_code).json( res_err );
+        }    
+
+
+    });
+
+
+    app.use('/corporate-api/corporate', router);
 }
 
