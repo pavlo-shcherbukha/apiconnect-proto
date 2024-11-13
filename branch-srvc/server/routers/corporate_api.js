@@ -238,6 +238,6 @@ export default function corporate_api (app) {
     });
 
 
-    app.use('/corporate-api/corporate', router);
+    app.use('/xcorporate-api/corporate', router);
 }
 

@@ -54,13 +54,28 @@ export class CloudantSrvc  {
     }
 
     async readCorporateList(){
-        let response = await this.service.postAllDocs({ "db": this.icld_db, includeDocs: true, startKey: 'CORP', limit: 100});
-        let documentList = response.result.rows;
+        //let response = await this.service.postAllDocs({ "db": this.icld_db, includeDocs: true, startKey: 'CORP', limit: 100});
+        //let documentList = response.result.rows;
+
+        let response = await this.service.postFind( 
+            { 
+                "db": this.icld_db,
+                "selector":{ "type": {"$eq": "CORPORATE" } },
+                "fields": ["_id", "_rev"],
+                "limit": 100
+            }
+        );
+
+        let documentList = response.result.docs;
+
+
+
 
         let corporateList=[]
         for (const document of documentList) {
-            corporateList.push(document.doc)
-          }
+            let corporate = await this.readCorporatebyid({ "corporateid": document._id})
+            corporateList.push(corporate)
+        }
         return corporateList;
 
     }

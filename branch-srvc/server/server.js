@@ -106,7 +106,7 @@ import corporate from './routers/corporate.js';
 import payment from './routers/payment.js';
 import pymprocessor from './routers/process.js';
 
-import corporate_api from './routers/corporate_api.js';
+//import corporate_api from './routers/corporate_api.js';
 
 
 health(app)
@@ -116,7 +116,7 @@ corporate(app)
 payment(app)
 pymprocessor(app)
 
-corporate_api(app)
+//corporate_api(app)
 
 
 // ============================================
