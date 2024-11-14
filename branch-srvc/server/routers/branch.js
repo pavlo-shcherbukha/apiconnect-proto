@@ -100,7 +100,7 @@ export default function branch (app) {
 
 
     });
-    router.get('/:corporateid/:branchid', async function(req, res, next) {
+    router.get('/corporate/:corporateid/branch/:branchid', async function(req, res, next) {
         const log = logger.child({ hostname: process.env.HOSTNAME||'localhost', label: 'router:branch' });
 
         try{
@@ -148,7 +148,7 @@ export default function branch (app) {
 
     });
 
-    router.delete('/:corporateid/:branchid', async function(req, res, next) {
+    router.delete('/corporate/:corporateid/branch/:branchid', async function(req, res, next) {
         const log = logger.child({ hostname: process.env.HOSTNAME||'localhost', label: 'router:branch' });
 
         try{
@@ -239,7 +239,7 @@ export default function branch (app) {
 
     });
 
-    router.options('/:corporateid/:branchid', async function(req, res, next) {
+    router.options('/corporate/:corporateid/branch/:branchid', async function(req, res, next) {
         const log = logger.child({ hostname: process.env.HOSTNAME||'localhost', label: 'router:branch' });
         try{
             log.info(`HTTP Request: Method: ${req.method} BaseUrl: ${req.baseUrl} `);
