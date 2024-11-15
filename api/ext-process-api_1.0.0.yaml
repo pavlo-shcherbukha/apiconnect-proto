@@ -1,0 +1,123 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: ExtProcess-API
+  x-ibm-name: ext-process-api
+  description: Опиc Process API для processing платіжних відомостей
+servers:
+  - url: /extprocessapi
+x-ibm-configuration:
+  properties:
+    target-url:
+      value: https://application-f9.1nxfv2nzml19.eu-de.codeengine.appdomain.cloud
+      description: URL of the proxy policy
+      encoded: false
+  gateway: datapower-api-gateway
+  type: rest
+  phase: realized
+  enforced: true
+  testable: true
+  assembly:
+    execute:
+      - invoke:
+          version: 2.3.0
+          title: invoke
+          backend-type: detect
+          header-control:
+            type: blocklist
+            values: []
+          parameter-control:
+            type: allowlist
+            values: []
+          http-version: HTTP/1.1
+          timeout: 60
+          verb: keep
+          chunked-uploads: true
+          persistent-connection: true
+          cache-response: protocol
+          cache-ttl: 900
+          stop-on-error: []
+          websocket-upgrade: false
+          graphql-send-type: detect
+          target-url: $(target-url)$(api.operation.path)
+  activity-log:
+    enabled: true
+    success-content: activity
+    error-content: payload
+  cors:
+    enabled: true
+paths:
+  /process-api/process/{paymentid}:
+    post:
+      operationId: post_process_payment_by_id
+      parameters:
+        - name: paymentid
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Create payment
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProcessRequestType'
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessPaymentResponceType'
+        5XX:
+          description: Application Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        4XX:
+          description: Application Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  responses: {}
+  schemas:
+    InnerErrorType:
+      type: object
+      properties:
+        code:
+          type: string
+        description:
+          type: string
+        stack:
+          type: string
+    ErrorType:
+      type: object
+      properties:
+        code:
+          type: string
+        description:
+          type: string
+        target:
+          type: string
+        Inner:
+          $ref: '#/components/schemas/InnerErrorType'
+    Error:
+      $ref: '#/components/schemas/ErrorType'
+    ProcessPaymentResponceType:
+      type: object
+      properties:
+        paymentid:
+          type: string
+    ProcessRequestType:
+      type: object
+      properties:
+        proc_status:
+          type: string
+        proc_status_dsc:
+          type: string
+        proc_error_dsc:
+          type: string

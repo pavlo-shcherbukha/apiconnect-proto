@@ -1,0 +1,214 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: ExtPaymentAPI
+  x-ibm-name: ext-payment-api
+  description: Опиc Payment API для для створення платіжних відомостей
+servers:
+  - url: /extpaymentapi
+x-ibm-configuration:
+  properties:
+    target-url:
+      value: https://application-f9.1nxfv2nzml19.eu-de.codeengine.appdomain.cloud
+      description: URL of the proxy policy
+      encoded: false
+  gateway: datapower-api-gateway
+  type: rest
+  phase: realized
+  enforced: true
+  testable: true
+  assembly:
+    execute:
+      - invoke:
+          version: 2.3.0
+          title: invoke
+          backend-type: detect
+          header-control:
+            type: blocklist
+            values: []
+          parameter-control:
+            type: allowlist
+            values: []
+          http-version: HTTP/1.1
+          timeout: 60
+          verb: keep
+          chunked-uploads: true
+          persistent-connection: true
+          cache-response: protocol
+          cache-ttl: 900
+          stop-on-error: []
+          websocket-upgrade: false
+          graphql-send-type: detect
+          target-url: $(target-url)$(api.operation.path)
+  activity-log:
+    enabled: true
+    success-content: activity
+    error-content: payload
+  cors:
+    enabled: true
+paths:
+  /payment-api/payment:
+    put:
+      operationId: put_create_payment
+      requestBody:
+        description: Create payment
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentType'
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentIdResponceType'
+        5XX:
+          description: Application Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        4XX:
+          description: Application Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /payment-api/payment/{paymentid}:
+    get:
+      operationId: get_payment_by_id
+      parameters:
+        - name: paymentid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentResponseType'
+        5XX:
+          description: Application Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        4XX:
+          description: Application Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /payment-api/payment/status/{paymentid}:
+    get:
+      operationId: get_status_by_id
+      parameters:
+        - name: paymentid
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentStatusResponseType'
+        5XX:
+          description: Application Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        4XX:
+          description: Application Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  responses: {}
+  schemas:
+    InnerErrorType:
+      type: object
+      properties:
+        code:
+          type: string
+        description:
+          type: string
+        stack:
+          type: string
+    ErrorType:
+      type: object
+      properties:
+        code:
+          type: string
+        description:
+          type: string
+        target:
+          type: string
+        Inner:
+          $ref: '#/components/schemas/InnerErrorType'
+    Error:
+      $ref: '#/components/schemas/ErrorType'
+    EmpyPaymentType:
+      type: object
+      properties:
+        emp_id:
+          type: string
+        emp_fio:
+          type: string
+        emp_card_acc:
+          type: string
+        tr_type:
+          type: string
+        tr_amount:
+          type: integer
+        tr_currency:
+          type: string
+    PaymentType:
+      type: object
+      properties:
+        branchid:
+          type: string
+        payment_type:
+          type: string
+        sep_payment_ref:
+          type: string
+        signature:
+          type: string
+        rows:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmpyPaymentType'
+    PaymentIdResponceType:
+      type: object
+      properties:
+        paymentid:
+          type: string
+    PaymentResponseType:
+      type: object
+      properties:
+        branchid:
+          type: string
+        payment_type:
+          type: string
+        sep_payment_ref:
+          type: string
+        signature:
+          type: string
+        rows:
+          type: array
+          items:
+            $ref: '#/components/schemas/EmpyPaymentType'
+    PaymentStatusResponseType:
+      type: object
+      properties:
+        status:
+          type: string
