@@ -1,9 +1,9 @@
 openapi: 3.0.0
 info:
   version: 1.0.0
-  title: ExtBranchAPI- Branch dict
+  title: ExtBranchAPI
   x-ibm-name: extbranchapi-branch-dict
-  description: Опси Branch API  для ведення довідника бренчів корпорації
+  description: Опси Branch API  для  ведення довідника бренчів  корпорації
 servers:
   - url: /extbranchapi
 x-ibm-configuration:
@@ -12,8 +12,6 @@ x-ibm-configuration:
       value: https://application-f9.1nxfv2nzml19.eu-de.codeengine.appdomain.cloud
       description: URL of the proxy policy
       encoded: false
-  cors:
-    enabled: true
   gateway: datapower-api-gateway
   type: rest
   phase: realized
@@ -21,24 +19,163 @@ x-ibm-configuration:
   testable: true
   assembly:
     execute:
-      - invoke:
-          title: invoke
+      - operation-switch:
           version: 2.0.0
-          verb: keep
-          target-url: $(target-url)
-          follow-redirects: false
-          timeout: 60
-          parameter-control:
-            type: allowlist
-            values: []
-          header-control:
-            type: blocklist
-            values: []
-          inject-proxy-headers: true
-          chunked-uploads: true
-          persistent-connection: true
+          title: operation-switch
+          case:
+            - operations:
+                - put_create_branch
+              execute:
+                - invoke:
+                    version: 2.3.0
+                    title: invoke
+                    backend-type: detect
+                    header-control:
+                      type: blocklist
+                      values: []
+                    parameter-control:
+                      type: allowlist
+                      values: []
+                    http-version: HTTP/1.1
+                    timeout: 60
+                    verb: keep
+                    chunked-uploads: true
+                    persistent-connection: true
+                    cache-response: protocol
+                    cache-ttl: 900
+                    stop-on-error: []
+                    websocket-upgrade: false
+                    graphql-send-type: detect
+                    target-url: $(target-url)$(api.operation.path)
+            - operations:
+                - get_branch_list
+              execute:
+                - invoke:
+                    version: 2.3.0
+                    title: invoke
+                    backend-type: detect
+                    header-control:
+                      type: blocklist
+                      values: []
+                    parameter-control:
+                      type: allowlist
+                      values: []
+                    http-version: HTTP/1.1
+                    timeout: 60
+                    verb: keep
+                    chunked-uploads: true
+                    persistent-connection: true
+                    cache-response: protocol
+                    cache-ttl: 900
+                    stop-on-error: []
+                    websocket-upgrade: false
+                    graphql-send-type: detect
+                    target-url: $(target-url)$(api.operation.path)
+            - operations:
+                - option_branches
+              execute:
+                - invoke:
+                    version: 2.3.0
+                    title: invoke
+                    backend-type: detect
+                    header-control:
+                      type: blocklist
+                      values: []
+                    parameter-control:
+                      type: allowlist
+                      values: []
+                    http-version: HTTP/1.1
+                    timeout: 60
+                    verb: keep
+                    chunked-uploads: true
+                    persistent-connection: true
+                    cache-response: protocol
+                    cache-ttl: 900
+                    stop-on-error: []
+                    websocket-upgrade: false
+                    graphql-send-type: detect
+                    target-url: $(target-url)$(api.operation.path)
+            - operations:
+                - get_branch_by_ids
+              execute:
+                - invoke:
+                    version: 2.3.0
+                    title: invoke
+                    backend-type: detect
+                    header-control:
+                      type: blocklist
+                      values: []
+                    parameter-control:
+                      type: allowlist
+                      values: []
+                    http-version: HTTP/1.1
+                    timeout: 60
+                    verb: keep
+                    chunked-uploads: true
+                    persistent-connection: true
+                    cache-response: protocol
+                    cache-ttl: 900
+                    stop-on-error: []
+                    websocket-upgrade: false
+                    graphql-send-type: detect
+                    target-url: $(target-url)$(api.operation.path)
+            - operations:
+                - delete_branch_by_ids
+              execute:
+                - invoke:
+                    version: 2.3.0
+                    title: invoke
+                    backend-type: detect
+                    header-control:
+                      type: blocklist
+                      values: []
+                    parameter-control:
+                      type: allowlist
+                      values: []
+                    http-version: HTTP/1.1
+                    timeout: 60
+                    verb: keep
+                    chunked-uploads: true
+                    persistent-connection: true
+                    cache-response: protocol
+                    cache-ttl: 900
+                    stop-on-error: []
+                    websocket-upgrade: false
+                    graphql-send-type: detect
+                    target-url: $(target-url)$(api.operation.path)
+            - operations:
+                - optons_branch_by_ids
+              execute:
+                - invoke:
+                    version: 2.3.0
+                    title: invoke
+                    backend-type: detect
+                    header-control:
+                      type: blocklist
+                      values: []
+                    parameter-control:
+                      type: allowlist
+                      values: []
+                    http-version: HTTP/1.1
+                    timeout: 60
+                    verb: keep
+                    chunked-uploads: true
+                    persistent-connection: true
+                    cache-response: protocol
+                    cache-ttl: 900
+                    stop-on-error: []
+                    websocket-upgrade: false
+                    graphql-send-type: detect
+                    target-url: $(target-url)$(api.operation.path)
+          otherwise: []
+  activity-log:
+    enabled: true
+    success-content: activity
+    error-content: payload
+  cors:
+    enabled: true
 paths:
-  /branch-api/branch:
+  /branch-api/branch/{corporateid}:
     get:
       responses:
         '200':
@@ -47,6 +184,31 @@ paths:
             application/json:
               schema:
                 type: array
+                items:
+                  type: object
+                  properties:
+                    _id:
+                      type: string
+                    _rev:
+                      type: string
+                    type:
+                      type: string
+                    branch_name:
+                      type: string
+                    branch_erdpou:
+                      type: string
+                    branch_adress:
+                      type: string
+                    branch_phone:
+                      type: string
+                    branch_sign_certs:
+                      type: array
+                      items:
+                        type: string
+                    branch_encrypt_certs:
+                      type: array
+                      items:
+                        type: string
         5XX:
           description: Application Error
           content:
@@ -60,6 +222,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
       operationId: get_branch_list
+      parameters:
+        - name: corporateid
+          in: path
+          required: true
+          schema:
+            type: string
     put:
       operationId: put_create_branch
       responses:
@@ -82,8 +250,12 @@ paths:
                     type: string
                   branch_sign_certs:
                     type: array
+                    items:
+                      type: string
                   branch_encrypt_certs:
                     type: array
+                    items:
+                      type: string
         5XX:
           description: Application Error
           content:
@@ -96,12 +268,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+      parameters:
+        - name: corporateid
+          in: path
+          required: true
+          schema:
+            type: string
     options:
       responses:
         '200':
           description: success
       operationId: option_branches
-  /branch-api/branch/:corporateid/:branchid:
+      parameters:
+        - name: corporateid
+          in: path
+          required: true
+          schema:
+            type: string
+  /branch-api/branch/{corporateid}/{branchid}:
     get:
       responses:
         '200':
@@ -127,8 +311,12 @@ paths:
                     type: string
                   branch_sign_certs:
                     type: array
+                    items:
+                      type: string
                   branch_encrypt_certs:
                     type: array
+                    items:
+                      type: string
         4XX:
           description: Application error
           content:
@@ -197,6 +385,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
       operationId: delete_branch_by_ids
+      parameters:
+        - name: corporateid
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: branchid
+          in: path
+          required: true
+          schema:
+            type: string
 components:
   responses: {}
   schemas:
